@@ -1,0 +1,27 @@
+{
+  "name": "SevaDesk — STE CSC Operations",
+  "short_name": "SevaDesk",
+  "description": "Personal CSC operations dashboard for Sai Tilak Enterprises, Ambernath.",
+  "start_url": "/sevadesk/",
+  "scope": "/sevadesk/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0d1f12",
+  "theme_color": "#0d1f12",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "lang": "en-IN"
+}
