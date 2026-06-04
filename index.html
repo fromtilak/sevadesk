@@ -3,33 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SevaDesk — STE CSC Operations</title>
-<meta name="description" content="Personal CSC operations dashboard for Sai Tilak Enterprises, Ambernath. Print sizes, checklists, portals, rate card.">
+<title>SevaDesk — STE</title>
 <meta name="theme-color" content="#0d1f12">
-
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SevaDesk">
-
-<!-- Icons (use your own later) -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230d1f12'/><text y='22' x='5' font-size='20' fill='%234ade80'>S</text></svg>">
-
-<!-- Tabler Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
-
-<!-- IBM Plex Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#f1f5f0;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;color:#111827}
+.lock{position:fixed;inset:0;background:#0d1f12;display:flex;align-items:center;justify-content:center;z-index:9999}
+.lockbox{width:340px;padding:0 20px;text-align:center}
+.lock-logo{font-size:30px;font-weight:700;color:#fff;letter-spacing:-.5px;margin-bottom:4px}
+.lock-sub{color:rgba(255,255,255,.35);font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:36px}
+.lock-heading{font-size:15px;font-weight:500;color:rgba(255,255,255,.8);margin-bottom:20px}
+.lock-lbl{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);margin-bottom:7px;text-align:left}
+.lock-pw-wrap{position:relative;margin-bottom:12px}
+.lock-input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:12px 42px 12px 14px;color:#fff;font-size:15px;font-family:inherit;outline:none}
+.lock-input::placeholder{color:rgba(255,255,255,.25)}
+.lock-input:focus{border-color:#4ade80}
+.lock-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:16px;padding:4px}
+.lock-btn{width:100%;background:#16a34a;border:none;border-radius:8px;padding:13px;color:#fff;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;margin-bottom:10px}
+.lock-btn:hover{background:#15803d}
+.lock-btn:disabled{background:#6b7280;cursor:default}
+.lock-err{font-size:12px;color:#f87171;min-height:18px;margin-bottom:6px}
+.lock-hint{font-size:11px;color:rgba(255,255,255,.25);line-height:1.6;margin-top:12px}
 .app{display:flex;height:100vh;overflow:hidden}
-
-/* SIDEBAR */
 .sb{width:220px;flex-shrink:0;background:#0d1f12;display:flex;flex-direction:column;overflow-y:auto}
 .logo{padding:1.1rem 1rem;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0}
 .lo-name{color:#fff;font-size:16px;font-weight:600;letter-spacing:-.3px}
@@ -41,107 +44,135 @@ html,body{height:100%;background:#f1f5f0;font-family:'IBM Plex Sans',system-ui,s
 .ni.on{color:#fff;background:rgba(74,222,128,.13);border-left-color:#4ade80}
 .ni i{font-size:15px;width:18px;flex-shrink:0}
 .nbadge{margin-left:auto;font-size:9px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.3);padding:2px 6px;border-radius:20px}
-
-/* MAIN */
 .main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
 .topbar{height:50px;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;padding:0 1.25rem;flex-shrink:0}
 .tb-tit{font-size:14px;font-weight:600;color:#111827}
-.tb-right{display:flex;align-items:center;gap:12px}
+.tb-right{display:flex;align-items:center;gap:6px}
 .tb-dt{font-size:11px;color:#9ca3af;font-family:'IBM Plex Mono',monospace}
+.tb-btn{background:none;border:1px solid #e5e7eb;cursor:pointer;padding:5px 10px;border-radius:6px;font-size:11px;color:#9ca3af;font-family:inherit;display:flex;align-items:center;gap:4px}
+.tb-btn:hover{background:#fee2e2;color:#dc2626;border-color:#fca5a5}
+.tb-btn.gear:hover{background:#f3f4f6;color:#374151;border-color:#d1d5db}
 #content{flex:1;overflow-y:auto;padding:1.2rem 1.5rem;background:#f1f5f0}
-
-/* CARDS */
 .card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1.1rem 1.25rem;margin-bottom:.9rem}
 .card:last-child{margin-bottom:0}
 .ch{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9ca3af;margin-bottom:.9rem}
-
-/* CAT TABS */
 .cat-tabs{display:flex;gap:6px;margin-bottom:.9rem;flex-wrap:wrap}
-button.ct{padding:5px 14px;border-radius:20px;border:1px solid #e5e7eb;font-size:12px;cursor:pointer;color:#6b7280;background:#fff;font-family:inherit;transition:all .1s}
-button.ct:hover{border-color:#86efac;background:#f0fdf4;color:#15803d}
+button.ct{padding:5px 14px;border-radius:20px;border:1px solid #e5e7eb;font-size:12px;cursor:pointer;color:#6b7280;background:#fff;font-family:inherit}
 button.ct.on{background:#f0fdf4;border-color:#16a34a;color:#15803d;font-weight:500}
-
-/* PRINT BUTTONS */
+.empty{padding:2.5rem;text-align:center;background:#f9fafb;border-radius:10px;border:1px dashed #e5e7eb;color:#9ca3af}
+.empty i{font-size:28px;display:block;margin-bottom:8px}
+.soon{padding:3.5rem 2rem;text-align:center;background:#f9fafb;border-radius:12px;border:1px dashed #e5e7eb}
+.soon i{font-size:36px;color:#d1d5db;display:block;margin-bottom:12px}
 .pbgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:8px;margin-bottom:.9rem}
 .pb{background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:8px;padding:12px 8px;cursor:pointer;text-align:center;transition:all .12s;user-select:none}
 .pb:hover,.pb.on{border-color:#16a34a;background:#f0fdf4}
-.pb i{font-size:22px;color:#6b7280;display:block;margin-bottom:6px;transition:color .12s}
+.pb i{font-size:22px;color:#6b7280;display:block;margin-bottom:6px}
 .pb.on i{color:#16a34a}
 .pb-lbl{font-size:11px;font-weight:500;color:#374151;line-height:1.3}
-
-/* PRINT RESULT */
 .result{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:1.2rem}
 .res-name{font-size:16px;font-weight:600;color:#15803d;margin-bottom:1rem}
 .specs{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px;margin-bottom:1rem}
 .sl{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#6b7280;margin-bottom:4px}
 .sv{font-size:14px;font-weight:500;font-family:'IBM Plex Mono',monospace;color:#111827;line-height:1.4}
-.sv.plain{font-family:'IBM Plex Sans',sans-serif;font-size:12px}
+.sv.plain{font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:400}
 .dbox{background:#fff;border:1px solid #bbf7d0;border-radius:7px;padding:10px 12px;margin-bottom:8px}
 .dlbl{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;margin-bottom:4px}
 .dval{font-size:12px;color:#374151;line-height:1.6}
 .rnote{font-size:12px;color:#166534;background:#dcfce7;padding:9px 12px;border-radius:7px;line-height:1.6}
-.empty{padding:3rem 2rem;text-align:center;background:#f9fafb;border-radius:10px;border:1px dashed #e5e7eb;color:#9ca3af}
-.empty i{font-size:30px;display:block;margin-bottom:10px}
-
-/* PORTALS */
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}
-a.plink{display:block;padding:11px 13px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;text-decoration:none;transition:all .12s}
+a.plink{display:block;padding:11px 13px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;text-decoration:none}
 a.plink:hover{background:#eff6ff;border-color:#93c5fd}
-.pl-name{font-size:13px;font-weight:500;color:#111827;margin-bottom:2px}
+.pl-name{font-size:12px;font-weight:500;color:#111827;margin-bottom:2px}
 .pl-url{font-size:10px;color:#9ca3af;font-family:'IBM Plex Mono',monospace}
 .pl-desc{font-size:11px;color:#9ca3af;margin-top:3px}
-
-/* CHECKLISTS */
 .clf{background:#fff;border:1px solid #e5e7eb;border-radius:10px;margin-bottom:8px;overflow:hidden}
 .clf-h{display:flex;align-items:center;gap:10px;padding:.9rem 1.2rem;cursor:pointer;user-select:none}
 .clf-title{font-size:13px;font-weight:500;color:#111827;flex:1;line-height:1.4}
 .clf-meta{font-size:11px;color:#9ca3af;margin-top:2px}
 .prog{font-size:11px;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:20px;font-weight:500;flex-shrink:0}
 .cl-items{padding:.8rem 1.2rem;border-top:1px solid #f3f4f6;display:flex;flex-direction:column;gap:6px}
-.ci{display:flex;align-items:flex-start;gap:10px;padding:7px 10px;background:#f9fafb;border-radius:6px;cursor:pointer;transition:background .1s}
+.ci{display:flex;align-items:flex-start;gap:10px;padding:7px 10px;background:#f9fafb;border-radius:6px;cursor:pointer}
 .ci:hover{background:#f3f4f6}
 .ci.ck{background:#f0fdf4}
-.cbox{width:18px;height:18px;border:1.5px solid #d1d5db;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;background:#fff;transition:all .1s}
+.cbox{width:18px;height:18px;border:1.5px solid #d1d5db;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;background:#fff}
 .cbox.ck{background:#16a34a;border-color:#16a34a}
 .cl-text{font-size:12px;color:#374151;line-height:1.5}
 .ci.ck .cl-text{color:#9ca3af;text-decoration:line-through}
 button.rbtn{margin-top:10px;font-size:11px;padding:5px 12px;border:1px solid #e5e7eb;border-radius:6px;background:#fff;color:#9ca3af;cursor:pointer;font-family:inherit}
-button.rbtn:hover{background:#f9fafb}
-
-/* RATE CARD */
 .rt{width:100%;border-collapse:collapse}
 .rt th{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;text-align:left;padding:6px 8px;border-bottom:1px solid #f3f4f6}
 .rt td{padding:9px 8px;border-bottom:1px solid #fafafa;font-size:13px;color:#374151}
 .rt tr:last-child td{border-bottom:none}
 input.ri{border:none;background:transparent;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#374151;width:70px;text-align:right;padding:2px 5px;border-radius:4px}
 input.ri:focus{outline:none;background:#f0fdf4}
-button.gbtn{padding:7px 15px;border:1px solid #16a34a;border-radius:7px;background:#fff;color:#16a34a;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .1s}
+button.gbtn{padding:7px 15px;border:1px solid #16a34a;border-radius:7px;background:#fff;color:#16a34a;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
 button.gbtn.on{background:#f0fdf4}
-button.gbtn:hover{background:#f0fdf4}
-
-/* DASHBOARD */
 .dqgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
 .dq{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 12px;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .12s;user-select:none}
 .dq:hover{border-color:#4ade80;background:#f0fdf0}
 .dq.dim{opacity:.45;cursor:default;pointer-events:none}
 .dq i{font-size:22px;color:#6b7280}
 .dq-lbl{font-size:12px;font-weight:500;color:#374151}
-.p2b{font-size:9px;background:#fef9c3;color:#92400e;padding:2px 7px;border-radius:10px}
+.p2b{font-size:9px;background:#f0fdf4;color:#15803d;padding:2px 7px;border-radius:10px}
 .hpgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:8px}
-a.hp{display:block;padding:10px 12px;border-radius:8px;text-decoration:none;border:1px solid;font-size:12px;font-weight:500;transition:opacity .12s}
-a.hp:hover{opacity:.75}
-
-/* COMING SOON */
-.soon{padding:3.5rem 2rem;text-align:center;background:#f9fafb;border-radius:12px;border:1px dashed #e5e7eb}
-.soon i{font-size:36px;color:#d1d5db;display:block;margin-bottom:12px}
-.soon-title{font-size:16px;font-weight:500;color:#374151;margin-bottom:8px}
-.soon-sub{font-size:13px;color:#9ca3af;max-width:300px;margin:0 auto;line-height:1.7}
-
-/* RESPONSIVE */
+a.hp{display:block;padding:10px 12px;border-radius:8px;text-decoration:none;border:1px solid;font-size:12px;font-weight:500}
+.add-form{display:grid;grid-template-columns:140px 1fr 90px 1fr 36px;gap:8px;align-items:end;margin-bottom:1rem}
+.fl{display:flex;flex-direction:column;gap:4px}
+.fl label{font-size:10px;color:#9ca3af;font-weight:500;text-transform:uppercase;letter-spacing:.4px}
+.fl input,.fl select{border:1px solid #e5e7eb;border-radius:7px;padding:7px 10px;font-size:13px;font-family:inherit;background:#fff;color:#111827;outline:none;width:100%}
+.fl input:focus,.fl select:focus{border-color:#16a34a}
+button.add-btn{background:#16a34a;color:#fff;border:none;border-radius:7px;padding:0;font-size:20px;cursor:pointer;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+button.add-btn:hover{background:#15803d}
+.day-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;margin-bottom:.75rem;flex-wrap:wrap;gap:6px}
+.day-total{font-size:18px;font-weight:600;color:#15803d;font-family:'IBM Plex Mono',monospace}
+.day-meta{font-size:12px;color:#16a34a}
+.date-nav{display:flex;align-items:center;gap:8px;margin-bottom:.75rem}
+.date-nav button{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:#374151;font-family:inherit}
+.date-nav button:hover{background:#f9fafb}
+.date-nav span{font-size:13px;font-weight:500;color:#111827;font-family:'IBM Plex Mono',monospace}
+.dtable{width:100%;border-collapse:collapse}
+.dtable th{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;text-align:left;padding:6px 10px;border-bottom:1px solid #f3f4f6;white-space:nowrap}
+.dtable td{padding:9px 10px;border-bottom:1px solid #fafafa;font-size:13px;color:#374151;vertical-align:middle}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:#fafafa}
+.ico-btn{background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:5px;font-size:15px;color:#9ca3af}
+.ico-btn:hover{background:#f3f4f6;color:#374151}
+.ico-btn.del:hover{background:#fee2e2;color:#dc2626}
+.amt{font-family:'IBM Plex Mono',monospace;font-weight:500}
+.svc-pill{font-size:10px;padding:2px 8px;border-radius:20px;background:#f3f4f6;color:#374151;display:inline-block}
+.inc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:1rem}
+.inc-card{background:#f9fafb;border-radius:9px;padding:14px;border:1px solid #f3f4f6}
+.inc-card.hi{background:#f0fdf4;border-color:#bbf7d0}
+.inc-card.am{background:#fffbeb;border-color:#fde68a}
+.inc-val{font-size:22px;font-weight:600;color:#111827;font-family:'IBM Plex Mono',monospace}
+.inc-card.hi .inc-val{color:#15803d}
+.inc-card.am .inc-val{color:#92400e}
+.inc-lbl{font-size:11px;color:#9ca3af;margin-top:3px}
+.rcpt-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:500}
+.rcpt-box{background:#fff;border-radius:12px;padding:1.75rem;width:300px;max-width:90vw}
+.rcpt-head{text-align:center;padding-bottom:1rem;border-bottom:1px dashed #e5e7eb;margin-bottom:1rem}
+.rcpt-biz{font-size:15px;font-weight:600}
+.rcpt-addr{font-size:11px;color:#9ca3af;margin-top:3px;line-height:1.5}
+.rcpt-row{display:flex;justify-content:space-between;font-size:13px;color:#374151;padding:4px 0}
+.rcpt-row.tot{font-weight:600;font-size:15px;border-top:1px solid #e5e7eb;margin-top:8px;padding-top:10px}
+.rcpt-thanks{text-align:center;font-size:11px;color:#9ca3af;margin-top:1rem}
+.rcpt-btns{display:flex;gap:8px;margin-top:1.25rem}
+.rcpt-btns button{flex:1;padding:9px;border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:500}
+.r-print{background:#16a34a;color:#fff;border:none}
+.r-print:hover{background:#15803d}
+.r-close{background:#f9fafb;color:#374151;border:1px solid #e5e7eb}
+.wa-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.25rem;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px}
+.wa-msg{flex:1;font-size:13px;color:#374151;line-height:1.6}
+.wa-label{font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+button.copy-btn{background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit;color:#374151;white-space:nowrap;flex-shrink:0}
+button.copy-btn:hover{background:#f0fdf4;border-color:#86efac;color:#15803d}
+button.copy-btn.copied{background:#f0fdf4;border-color:#16a34a;color:#15803d}
+@media print{body>*{display:none!important}#print-target{display:block!important;padding:24px;font-family:sans-serif}}
 @media(max-width:640px){
+  .add-form{grid-template-columns:1fr 1fr}
   .app{flex-direction:column;height:auto}
-  .sb{width:100%;flex-direction:row;overflow-x:auto;overflow-y:hidden;height:auto}
-  .logo{padding:.7rem 1rem;border-bottom:none;border-right:1px solid rgba(255,255,255,.07);flex-shrink:0}
+  .sb{width:100%;flex-direction:row;overflow-x:auto;overflow-y:hidden}
+  .logo{padding:.7rem 1rem;border-right:1px solid rgba(255,255,255,.07);border-bottom:none;flex-shrink:0}
   .lo-sub{display:none}
   .snav{display:flex;flex-direction:row;padding:.3rem 0;align-items:center}
   .nsec{display:none}
@@ -156,27 +187,42 @@ a.hp:hover{opacity:.75}
 </head>
 <body>
 
-<div class="app">
-  <div class="sb" id="sb">
-    <div class="logo">
-      <div class="lo-name">SevaDesk</div>
-      <div class="lo-sub">STE · Ambernath</div>
+<div class="lock" id="lockscreen">
+  <div class="lockbox">
+    <div class="lock-logo">SevaDesk</div>
+    <div class="lock-sub">Sai Tilak Enterprises · Ambernath</div>
+    <div class="lock-heading" id="lock-heading">Enter your password</div>
+    <div class="lock-lbl" id="lock-lbl">Password</div>
+    <div class="lock-pw-wrap">
+      <input class="lock-input" type="password" id="pwd-input" placeholder="Your password" autocomplete="current-password">
+      <button class="lock-eye" id="eye-btn" onclick="toggleEye()"><i class="ti ti-eye" id="eye-ico"></i></button>
     </div>
+    <div class="lock-err" id="lock-err"></div>
+    <button class="lock-btn" id="lock-submit" onclick="handleLockSubmit()">Unlock</button>
+    <div class="lock-hint" id="lock-hint"></div>
+  </div>
+</div>
+
+<div id="print-target" style="display:none"></div>
+
+<div class="app" id="appwrap" style="display:none">
+  <div class="sb">
+    <div class="logo"><div class="lo-name">SevaDesk</div><div class="lo-sub">STE · Ambernath</div></div>
     <div class="snav">
       <div class="nsec">Main</div>
-      <div class="ni on" data-s="dash"><i class="ti ti-layout-dashboard" aria-hidden="true"></i><span>Dashboard</span></div>
-      <div class="ni" data-s="print"><i class="ti ti-printer" aria-hidden="true"></i><span>Print Helper</span></div>
-      <div class="ni" data-s="checklists"><i class="ti ti-checklist" aria-hidden="true"></i><span>Checklists</span></div>
-      <div class="ni" data-s="portals"><i class="ti ti-world" aria-hidden="true"></i><span>Portal Links</span></div>
-      <div class="ni" data-s="rates"><i class="ti ti-receipt" aria-hidden="true"></i><span>Rate Card</span></div>
+      <div class="ni on" data-s="dash"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></div>
+      <div class="ni" data-s="print"><i class="ti ti-printer"></i><span>Print Helper</span></div>
+      <div class="ni" data-s="checklists"><i class="ti ti-checklist"></i><span>Checklists</span></div>
+      <div class="ni" data-s="portals"><i class="ti ti-world"></i><span>Portal Links</span></div>
+      <div class="ni" data-s="rates"><i class="ti ti-receipt"></i><span>Rate Card</span></div>
       <div class="nsec">Operations</div>
-      <div class="ni" data-s="customers"><i class="ti ti-users" aria-hidden="true"></i><span>Customer Log</span><span class="nbadge">P2</span></div>
-      <div class="ni" data-s="income"><i class="ti ti-coin" aria-hidden="true"></i><span>Income</span><span class="nbadge">P2</span></div>
-      <div class="ni" data-s="wa"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i><span>WA Templates</span><span class="nbadge">P2</span></div>
-      <div class="ni" data-s="supplies"><i class="ti ti-package" aria-hidden="true"></i><span>Supplies</span><span class="nbadge">P2</span></div>
+      <div class="ni" data-s="customers"><i class="ti ti-users"></i><span>Customer Log</span></div>
+      <div class="ni" data-s="income"><i class="ti ti-coin"></i><span>Income</span></div>
+      <div class="ni" data-s="wa"><i class="ti ti-brand-whatsapp"></i><span>WA Templates</span></div>
       <div class="nsec">STE</div>
-      <div class="ni" data-s="mis"><i class="ti ti-chart-bar" aria-hidden="true"></i><span>MIS Report</span><span class="nbadge">P3</span></div>
-      <div class="ni" data-s="helplines"><i class="ti ti-phone" aria-hidden="true"></i><span>Helplines</span><span class="nbadge">P3</span></div>
+      <div class="ni" data-s="supplies"><i class="ti ti-package"></i><span>Supplies</span><span class="nbadge">P3</span></div>
+      <div class="ni" data-s="mis"><i class="ti ti-chart-bar"></i><span>MIS Report</span><span class="nbadge">P3</span></div>
+      <div class="ni" data-s="helplines"><i class="ti ti-phone"></i><span>Helplines</span><span class="nbadge">P3</span></div>
     </div>
   </div>
   <div class="main">
@@ -184,6 +230,8 @@ a.hp:hover{opacity:.75}
       <span class="tb-tit" id="tb-tit">Dashboard</span>
       <div class="tb-right">
         <span class="tb-dt" id="tb-dt"></span>
+        <button class="tb-btn gear" onclick="changePwd()"><i class="ti ti-settings"></i></button>
+        <button class="tb-btn" onclick="doLogout()"><i class="ti ti-lock"></i> Lock</button>
       </div>
     </div>
     <div id="content"></div>
@@ -191,246 +239,325 @@ a.hp:hover{opacity:.75}
 </div>
 
 <script>
-// ---- STATE ----
-var pcat='ID Cards',psel=null,openCL=null,ticked={},editRates=false;
+async function sha256(str){var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str+'__seva__'));return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');}
+function isFirst(){return !localStorage.getItem('seva_hash');}
+function isLoggedIn(){return !!sessionStorage.getItem('seva_auth');}
 
-// ---- PRINT DATA ----
-var PI=[
-  {id:'aa',l:'Aadhaar Card',i:'ti-credit-card',c:'ID Cards',mm:'85.6 × 54 mm',inch:'3.37″ × 2.13″',dpi:'300 DPI min',paper:'Glossy card / PVC sheet',a4:'2 per A4 sheet',lami:'88 × 56 mm (2mm bleed)',dialog:'Set printer custom size to 85.6×54mm. Select Actual Size — never Fit to Page. 300 DPI minimum.',note:'Standard ISO ID-1 — same dimensions as a credit card. For PVC card printer: load PVC sheet. For paper print: use thick glossy, then laminate both sides.'},
-  {id:'pan',l:'PAN Card',i:'ti-credit-card',c:'ID Cards',mm:'85.6 × 54 mm',inch:'3.37″ × 2.13″',dpi:'300 DPI min',paper:'Glossy card / PVC',a4:'2 per A4 sheet',lami:'88 × 56 mm',dialog:'Open UTI/NSDL e-PAN PDF. Print at 100% Actual Size only. Never scale or Fit to Page.',note:'UTI and NSDL send a print-ready PDF. Always 100% actual size — any scaling changes the dimensions.'},
-  {id:'voter',l:'Voter ID (e-EPIC)',i:'ti-id-badge',c:'ID Cards',mm:'85.6 × 54 mm',inch:'3.37″ × 2.13″',dpi:'300 DPI',paper:'Glossy card stock',a4:'2 per A4',lami:'88 × 56 mm',dialog:'Download e-EPIC PDF from voterportal.eci.gov.in → print at 100% → laminate both sides.',note:'e-EPIC printout is a valid reference copy. Original PVC EPIC card is posted by ECI. Laminate the printed copy for wallet use.'},
-  {id:'dl',l:'Driving License',i:'ti-car',c:'ID Cards',mm:'85.6 × 54 mm',inch:'3.37″ × 2.13″',dpi:'300 DPI',paper:'Glossy card',a4:'2 per A4',lami:'88 × 56 mm',dialog:'Download from parivahan.gov.in. Print at actual size. Reference backup — original smart card is from RTO.',note:'Smart card DL is the legal document. The Parivahan printout is a reference/backup only. Can be laminated and kept in wallet.'},
-  {id:'ph_in',l:'Passport Photo (India)',i:'ti-user',c:'Passport Photos',mm:'35 × 45 mm',inch:'1.38″ × 1.77″',dpi:'600 DPI',paper:'Glossy photo paper',a4:'16 per A4 (4 col × 4 row)',lami:'No lamination',dialog:'Print 16-up on A4 at exactly 35×45mm each. White background. Face fills 70–80% of frame. Ears visible.',note:'Used for Passport, PAN, Aadhaar, most govt forms. White background only. No spectacles. Photo taken within last 6 months.'},
-  {id:'ph_us',l:'US / Canada Visa Photo',i:'ti-plane',c:'Passport Photos',mm:'51 × 51 mm',inch:'2″ × 2″',dpi:'600 DPI',paper:'Glossy photo paper',a4:'8 per A4 (2 col × 4 row)',lami:'No lamination',dialog:'Print 8-up on A4 at 51×51mm each. White/off-white background. Eye level 28–35mm from bottom.',note:'Strictly 2×2 inches. Head height 1 to 1⅜ inch. For US, Canada, Australia visa applications.'},
-  {id:'ph_st',l:'Stamp Size Photo',i:'ti-square-rounded',c:'Passport Photos',mm:'25 × 30 mm',inch:'1″ × 1.18″',dpi:'600 DPI',paper:'Glossy photo paper',a4:'24 per A4 (4 col × 6 row)',lami:'No lamination',dialog:'Print 24-up on A4 at 25×30mm each. White background. For affidavits and older school forms.',note:'Smallest common photo size in India. Print 24-up on A4 to maximise paper use.'},
-  {id:'4r',l:'4R Photo Print',i:'ti-photo',c:'Photo Prints',mm:'102 × 152 mm',inch:'4″ × 6″',dpi:'300 DPI',paper:'4R glossy photo paper',a4:'2 per A4 sheet',lami:'N/A',dialog:'Set paper size to "4R" or "4×6 inch" in printer dialog. Use 4R photo paper.',note:'Most common photo print size. Used for family photos, ID photo backups, school photos.'},
-  {id:'5r',l:'5R Photo Print',i:'ti-photo',c:'Photo Prints',mm:'127 × 178 mm',inch:'5″ × 7″',dpi:'300 DPI',paper:'5R glossy photo paper',a4:'1 per A4 approx',lami:'N/A',dialog:'Set paper to "5×7 inch" or "5R". Use dedicated 5R photo paper.',note:'For studio portraits and display photos.'},
-  {id:'a4p',l:'A4 Document',i:'ti-file',c:'Paper Sizes',mm:'210 × 297 mm',inch:'8.27″ × 11.69″',dpi:'300 DPI',paper:'75–80 gsm plain / 90+ for certs',a4:'1 sheet',lami:'A4 pouch: 216 × 303 mm',dialog:'Standard for all printers. Margins: 25mm top/bottom, 20mm sides. Font 11–12pt for body.',note:'Default for all govt certificates, forms, and applications. Use 90+ gsm for important certificates.'},
-  {id:'f4p',l:'F4 / Legal Size',i:'ti-file-text',c:'Paper Sizes',mm:'216 × 330 mm',inch:'8.5″ × 13″',dpi:'300 DPI',paper:'75–80 gsm plain',a4:'Separate Legal tray needed',lami:'Legal pouch: 220 × 340 mm',dialog:'Select "Legal" or "F4" in printer paper size. Printer must have Legal paper loaded in tray.',note:'Used for affidavits, power of attorney, court documents in Maharashtra.'},
-  {id:'a5p',l:'A5 Document',i:'ti-file-minus',c:'Paper Sizes',mm:'148 × 210 mm',inch:'5.83″ × 8.27″',dpi:'300 DPI',paper:'80 gsm plain',a4:'Print 2-up on A4',lami:'A5 pouch: 154 × 216 mm',dialog:'Use A5 paper tray, or print 2-up on A4 (select "2 pages per sheet") and cut.',note:'Half of A4. Used for receipts, small certificates, notices.'},
-  {id:'pb',l:'Bank Passbook',i:'ti-notebook',c:'Banking',mm:'185 × 90 mm (approx)',inch:'7.3″ × 3.5″',dpi:'300 DPI',paper:'Passbook ribbon / thermal',a4:'Passbook printer only',lami:'N/A',dialog:'Use dedicated passbook printer (dot matrix or thermal). Load passbook in correct orientation.',note:'Cannot print on regular inkjet or laser. Needs a passbook printer. IPPB is most common at CSC kiosks.'},
-];
-
-// ---- PORTAL DATA ----
-var PORTALS=[
-  {title:'Identity & IDs',color:'#2563eb',bg:'#eff6ff',items:[
-    {n:'UIDAI / Aadhaar',u:'https://uidai.gov.in',d:'Aadhaar services & download'},
-    {n:'NSDL PAN',u:'https://tin.tin.nsdl.com',d:'PAN application & correction'},
-    {n:'UTI PAN (UTIITSL)',u:'https://pan.utiitsl.com/',d:'UTI PAN portal'},
-    {n:'DigiLocker',u:'https://digilocker.gov.in',d:'Digital document wallet'},
-    {n:'Voter Portal (NVSP)',u:'https://voters.eci.gov.in/',d:'e-EPIC, voter ID registration'},
-    {n:'Sarathi (DL / RC)',u:'https://sarathi.parivahan.gov.in',d:'Driving license apply & slot'},
-    {n:'e-Shram',u:'https://eshram.gov.in',d:'Unorganised worker card'},
-    {n:'Passport India',u:'https://passportindia.gov.in',d:'Passport application & appointment'},
-  ]},
-  {title:'Maharashtra — Aaple Sarkar',color:'#d97706',bg:'#fffbeb',items:[
-    {n:'Aaple Sarkar Portal',u:'https://aaplesarkar.mahaonline.gov.in',d:'Income, caste, domicile certs'},
-    {n:'MahaOnline',u:'https://mahaonline.gov.in',d:'450+ MH govt services'},
-    {n:'Bhulekh 7/12 Satbara',u:'https://bhulekh.mahabhumi.gov.in',d:'Land records extract'},
-    {n:'iGR Maharashtra',u:'https://igrmaharashtra.gov.in',d:'Registration & e-stamp'},
-    {n:'e-District MH',u:'https://edistrict.mahaonline.gov.in',d:'Certificate applications'},
-    {n:'MSEDCL Bill Payment',u:'https://msedcl.in',d:'Electricity bill — Thane / MH'},
-    {n:'MSRTC Bus Booking',u:'https://msrtcbus.in',d:'Maharashtra state bus tickets'},
-  ]},
-  {title:'CSC & Central Govt',color:'#16a34a',bg:'#f0fdf4',items:[
-    {n:'CSC DigiSeva',u:'https://digitalseva.csc.gov.in',d:'Main CSC operator portal'},
-    {n:'UMANG (Web)',u:'https://web.umang.gov.in',d:'1200+ govt services in one place'},
-    {n:'Income Tax e-Filing',u:'https://incometax.gov.in',d:'ITR filing portal'},
-    {n:'GST Portal',u:'https://gst.gov.in',d:'GST registration & returns'},
-    {n:'PM Kisan',u:'https://pmkisan.gov.in',d:'Farmer registration & installment'},
-    {n:'e-Sanjeevani OPD',u:'https://esanjeevaniopd.in',d:'Telemedicine consultation'},
-    {n:'PM Awas Yojana',u:'https://pmaymis.gov.in',d:'Housing scheme apply & status'},
-  ]},
-  {title:'Insurance & Pension',color:'#7c3aed',bg:'#faf5ff',items:[
-    {n:'PMJAY Ayushman Bharat',u:'https://pmjay.gov.in',d:'Health card generation'},
-    {n:'NPS / APY (NSDL)',u:'https://enps.nsdl.com',d:'Pension enrollment'},
-    {n:'LIC Online',u:'https://licindia.in',d:'LIC premium & policy services'},
-    {n:'PMFBY Crop Insurance',u:'https://pmfby.gov.in',d:'Fasal Bima Yojana registration'},
-  ]},
-  {title:'Travel & Utilities',color:'#0891b2',bg:'#ecfeff',items:[
-    {n:'IRCTC Rail Booking',u:'https://irctc.co.in',d:'Train ticket booking'},
-    {n:'Indian Railways PNR',u:'https://www.indianrail.gov.in',d:'PNR status & train info'},
-    {n:'HP Gas Booking',u:'https://hindustanpetroleum.com',d:'HP LPG cylinder booking'},
-    {n:'Bharat Gas',u:'https://ebharatgas.com',d:'Bharat Gas cylinder booking'},
-  ]},
-  {title:'Education & Exams',color:'#dc2626',bg:'#fef2f2',items:[
-    {n:'IGNOU',u:'https://ignou.ac.in',d:'Admission, exam form, status'},
-    {n:'NIELIT',u:'https://nielit.gov.in',d:'CCC, O-Level exam form'},
-    {n:'National Scholarship',u:'https://scholarships.gov.in',d:'Pre/post-matric scholarships'},
-    {n:'Maharashtra Results',u:'https://mahresult.nic.in',d:'SSC, HSC, university results'},
-    {n:'MPSC',u:'https://mpsc.gov.in',d:'Maharashtra PSC exam forms'},
-  ]},
-];
-
-// ---- CHECKLIST DATA ----
-var CL=[
-  {id:'aa',n:'Aadhaar Update (Name / Address / DOB)',cat:'Identity',items:['Original Aadhaar card','Address proof — electricity bill, bank passbook, or ration card','Identity proof — PAN, passport, or voter ID','DOB proof if updating DOB — birth certificate or school leaving cert','Mobile number must be registered on Aadhaar for OTP','2 recent passport photos (35×45mm, white background)','Correction form — filled, signed, ready']},
-  {id:'pan',n:'PAN Card — New Application',cat:'Identity',items:['Aadhaar card (mandatory for eKYC PAN)','Date of birth proof — birth cert or Class 10 marksheet','2 recent passport photos (35×45mm)','Form 49A filled for Indian citizens','Fee: ₹107 for physical PAN / ₹66 for e-PAN only','Mobile number for OTP verification']},
-  {id:'inc',n:'Income Certificate (उत्पन्न दाखला)',cat:'Maharashtra Certs',items:['Aadhaar card — original + photocopy','Ration card — original + photocopy','Self-declaration of annual income — written and signed','2 passport photos (35×45mm)','Mobile number for OTP','Income proof: salary slip, Form 16, or agricultural receipt','Check Aaple Sarkar for current fee (usually ₹0–₹50)']},
-  {id:'cas',n:'Caste Certificate (जात प्रमाणपत्र)',cat:'Maharashtra Certs',items:['Aadhaar card — original + photocopy','Ration card with caste mentioned','School leaving certificate with caste entry','Father\'s / grandfather\'s caste proof (old documents if available)','2 passport photos (35×45mm)','Affidavit on ₹100 stamp paper (some talukas — check locally)','Self-declaration form (available at CSC)']},
-  {id:'dom',n:'Domicile Certificate (अधिवास दाखला)',cat:'Maharashtra Certs',items:['Aadhaar card — original + photocopy','Ration card showing Maharashtra address','15-year residence proof — rent agreement, voter card, or electricity bill','School leaving cert showing MH birth or education','2 passport photos (35×45mm)']},
-  {id:'sat',n:'7/12 Satbara Extract (सातबारा उतारा)',cat:'Land Records',items:['Survey / Gat number (गट नंबर) of the land','Village name (गाव)','Taluka name (तालुका)','District name (जिल्हा)','Land owner name or Aadhaar (for search)','Website: bhulekh.mahabhumi.gov.in','Fee: ₹15 per extract — pay via UPI or debit card']},
-  {id:'pas',n:'Passport — New Application',cat:'Identity',items:['Aadhaar card (mandatory)','PAN card','Voter ID as second ID proof','Address proof not older than 3 months','DOB proof — birth cert or Class 10 marksheet','2 fresh passport photos (35×45mm, white background, no specs)','Application form filled on passportindia.gov.in','Fee paid online before booking appointment']},
-  {id:'vot',n:'Voter ID — New Registration',cat:'Identity',items:['Aadhaar card','Age proof showing 18+ years','Address proof in the constituency','1 passport size photo','Fill Form 6 on voterportal.eci.gov.in','No fee for new voter registration']},
-  {id:'dln',n:'Driving License — New (LL to DL)',cat:'Identity',items:['Aadhaar card as address proof','Age proof — minimum 18 years for LMV (16 for 50cc)','Medical certificate Form 1A from any MBBS doctor','2 passport photos','Apply online: sarathi.parivahan.gov.in','Fee: ₹200–500 depending on vehicle class','LL test slot booked online after submission']},
-  {id:'esh',n:'e-Shram Card Registration',cat:'Central Schemes',items:['Aadhaar card with mobile number linked (mandatory)','Bank account number and IFSC code','Occupation: construction, domestic, farm, street vendor, etc.','Mobile number same as Aadhaar-linked number','Free registration — no fee','Portal: eshram.gov.in']},
-];
-
-// ---- RATES ----
-var defaultRates=[
-  {s:'Aadhaar print A4 (B&W)',r:20,c:'Printing'},{s:'Aadhaar card size + lamination',r:50,c:'Printing'},
-  {s:'PAN card print + lamination',r:50,c:'Printing'},{s:'Photocopy A4 (B&W)',r:3,c:'Printing'},
-  {s:'Photocopy A4 (colour)',r:15,c:'Printing'},{s:'Print A4 (B&W)',r:5,c:'Printing'},
-  {s:'Print A4 (colour)',r:20,c:'Printing'},{s:'Passport photo — 2 photos',r:50,c:'Photo'},
-  {s:'Passport photo — 4 photos',r:80,c:'Photo'},{s:'4R photo print',r:30,c:'Photo'},
-  {s:'Scanning per page',r:10,c:'Scanning'},{s:'Lamination — card size',r:20,c:'Lamination'},
-  {s:'Lamination — A4',r:40,c:'Lamination'},{s:'Lamination — A3',r:60,c:'Lamination'},
-  {s:'Aadhaar update service charge',r:100,c:'ID Services'},{s:'PAN new application charge',r:150,c:'ID Services'},
-  {s:'Income certificate service charge',r:100,c:'Certificates'},{s:'Caste certificate charge',r:150,c:'Certificates'},
-  {s:'Domicile certificate charge',r:100,c:'Certificates'},{s:'7/12 Satbara extract',r:50,c:'Certificates'},
-  {s:'IRCTC ticket booking charge',r:50,c:'Travel'},{s:'Mobile recharge charge',r:5,c:'Utility'},
-  {s:'Electricity bill payment charge',r:20,c:'Utility'},{s:'DTH recharge charge',r:10,c:'Utility'},
-];
-var rates;
-try{rates=JSON.parse(localStorage.getItem('seva_rates'))||defaultRates;}catch(e){rates=defaultRates;}
-
-// ---- TITLES ----
-var TITLES={dash:'Dashboard',print:'Print Helper',checklists:'Document Checklists',portals:'Portal Quick-Launch',rates:'Service Rate Card',customers:'Customer Log',income:'Income Tracker',wa:'WhatsApp Templates',supplies:'Supplies Tracker',mis:'MIS Report',helplines:'Helplines'};
-
-// ---- DATE ----
-function setDate(){
-  var d=new Date(),dy=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  document.getElementById('tb-dt').textContent=dy[d.getDay()]+' '+d.getDate()+' '+mo[d.getMonth()]+' '+d.getFullYear();
+async function handleLockSubmit(){
+  var pwd=document.getElementById('pwd-input').value.trim();
+  if(!pwd){document.getElementById('lock-err').textContent='Please enter a password.';return;}
+  var btn=document.getElementById('lock-submit');btn.disabled=true;btn.textContent='Checking...';
+  var hash=await sha256(pwd);
+  if(isFirst()){
+    if(pwd.length<6){document.getElementById('lock-err').textContent='Minimum 6 characters.';btn.disabled=false;btn.textContent='Set Password';return;}
+    localStorage.setItem('seva_hash',hash);sessionStorage.setItem('seva_auth','1');showApp();
+  }else{
+    if(hash===localStorage.getItem('seva_hash')){sessionStorage.setItem('seva_auth','1');showApp();}
+    else{document.getElementById('lock-err').textContent='Wrong password. Try again.';document.getElementById('pwd-input').value='';document.getElementById('pwd-input').focus();btn.disabled=false;btn.textContent='Unlock';}
+  }
 }
 
-// ---- NAVIGATION ----
+function showLock(){
+  document.getElementById('appwrap').style.display='none';document.getElementById('lockscreen').style.display='flex';
+  if(isFirst()){document.getElementById('lock-heading').textContent='Welcome — set your access password';document.getElementById('lock-lbl').textContent='Choose a password (min 6 characters)';document.getElementById('lock-submit').textContent='Set Password';document.getElementById('lock-hint').textContent='Stored only on this device. Required every time you open SevaDesk.';}
+  else{document.getElementById('lock-heading').textContent='Enter your password';document.getElementById('lock-lbl').textContent='Password';document.getElementById('lock-submit').textContent='Unlock';document.getElementById('lock-hint').textContent='';}
+  setTimeout(function(){document.getElementById('pwd-input').focus();},200);
+}
+
+function showApp(){document.getElementById('lockscreen').style.display='none';document.getElementById('appwrap').style.display='flex';setDate();nav('dash');}
+function doLogout(){sessionStorage.removeItem('seva_auth');document.getElementById('pwd-input').value='';document.getElementById('lock-err').textContent='';showLock();}
+function changePwd(){if(!confirm('Reset your password?\nYou will need to set a new one now.'))return;localStorage.removeItem('seva_hash');sessionStorage.removeItem('seva_auth');document.getElementById('pwd-input').value='';document.getElementById('lock-err').textContent='';showLock();}
+function toggleEye(){var i=document.getElementById('pwd-input'),e=document.getElementById('eye-ico');if(i.type==='password'){i.type='text';e.className='ti ti-eye-off';}else{i.type='password';e.className='ti ti-eye';}}
+document.getElementById('pwd-input').addEventListener('keydown',function(e){if(e.key==='Enter')handleLockSubmit();});
+if(isLoggedIn()){showApp();}else{showLock();}
+
+function setDate(){var d=new Date(),dy=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];document.getElementById('tb-dt').textContent=dy[d.getDay()]+' '+d.getDate()+' '+mo[d.getMonth()]+' '+d.getFullYear();}
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function fmtDate(s){var p=s.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+function fmtAmt(n){return '\u20b9'+Number(n).toLocaleString('en-IN');}
+
+var TITLES={dash:'Dashboard',print:'Print Helper',checklists:'Document Checklists',portals:'Portal Quick-Launch',rates:'Service Rate Card',customers:'Customer Log',income:'Income & Expenses',wa:'WhatsApp Templates',supplies:'Supplies Tracker',mis:'MIS Report',helplines:'Helplines'};
 function nav(s){
   document.querySelectorAll('.ni').forEach(function(n){n.classList.toggle('on',n.dataset.s===s);});
   document.getElementById('tb-tit').textContent=TITLES[s]||s;
-  var c=document.getElementById('content');
-  var coming=['customers','income','wa','supplies','mis','helplines'];
+  var c=document.getElementById('content'),p3=['supplies','mis','helplines'];
   if(s==='dash')c.innerHTML=rDash();
   else if(s==='print')c.innerHTML=rPrint();
   else if(s==='checklists')c.innerHTML=rCL();
   else if(s==='portals')c.innerHTML=rPortals();
   else if(s==='rates')c.innerHTML=rRates();
-  else if(coming.indexOf(s)>=0)c.innerHTML=rSoon(TITLES[s]);
+  else if(s==='customers')c.innerHTML=rCustomers();
+  else if(s==='income')c.innerHTML=rIncome();
+  else if(s==='wa')c.innerHTML=rWA();
+  else if(p3.indexOf(s)>=0)c.innerHTML='<div class="soon"><i class="ti ti-clock"></i><div style="font-size:15px;font-weight:500;color:#374151;margin-bottom:6px">'+TITLES[s]+' \u2014 Phase 3</div><div style="font-size:13px;color:#9ca3af;max-width:280px;margin:0 auto;line-height:1.7">Coming in Phase 3.</div></div>';
   c.scrollTop=0;
 }
+document.querySelectorAll('.ni').forEach(function(n){n.addEventListener('click',function(){nav(n.dataset.s);});});
 
-// ---- DASHBOARD ----
+var PI=[
+  {id:'aa',l:'Aadhaar Card',i:'ti-credit-card',c:'ID Cards',mm:'85.6 \xd7 54 mm',inch:'3.37\u2033 \xd7 2.13\u2033',dpi:'300 DPI min',paper:'Glossy card / PVC sheet',a4:'2 per A4 sheet',lami:'88 \xd7 56 mm (2mm bleed)',dialog:'Set printer custom size 85.6\xd754mm. Actual Size \u2014 never Fit to Page. 300 DPI minimum.',note:'ISO ID-1 format \u2014 same as a credit card. PVC printer: load PVC sheet. Paper print: thick glossy, laminate both sides.'},
+  {id:'pan',l:'PAN Card',i:'ti-credit-card',c:'ID Cards',mm:'85.6 \xd7 54 mm',inch:'3.37\u2033 \xd7 2.13\u2033',dpi:'300 DPI min',paper:'Glossy card / PVC',a4:'2 per A4 sheet',lami:'88 \xd7 56 mm',dialog:'Open UTI/NSDL e-PAN PDF. Print at 100% Actual Size. Never scale.',note:'NSDL/UTI send print-ready PDF. Always 100% actual size \u2014 any scaling changes dimensions.'},
+  {id:'voter',l:'Voter ID (e-EPIC)',i:'ti-id-badge',c:'ID Cards',mm:'85.6 \xd7 54 mm',inch:'3.37\u2033 \xd7 2.13\u2033',dpi:'300 DPI',paper:'Glossy card stock',a4:'2 per A4',lami:'88 \xd7 56 mm',dialog:'Download e-EPIC from voterportal.eci.gov.in \u2192 print 100% \u2192 laminate both sides.',note:'e-EPIC is a valid reference copy. Original PVC EPIC posted by ECI.'},
+  {id:'dl',l:'Driving License',i:'ti-car',c:'ID Cards',mm:'85.6 \xd7 54 mm',inch:'3.37\u2033 \xd7 2.13\u2033',dpi:'300 DPI',paper:'Glossy card',a4:'2 per A4',lami:'88 \xd7 56 mm',dialog:'Download from parivahan.gov.in. Print at actual size. Reference backup \u2014 original from RTO.',note:'Smart card DL is the legal document. Parivahan printout is backup only.'},
+  {id:'ph_in',l:'Passport Photo (India)',i:'ti-user',c:'Passport Photos',mm:'35 \xd7 45 mm',inch:'1.38\u2033 \xd7 1.77\u2033',dpi:'600 DPI',paper:'Glossy photo paper',a4:'16 per A4 (4\xd74)',lami:'No lamination',dialog:'Print 16-up on A4 at exactly 35\xd745mm. White background. Face 70\u201380% of frame.',note:'For Passport, PAN, Aadhaar, most govt forms. White background only. No specs. Within 6 months.'},
+  {id:'ph_us',l:'US / Canada Visa Photo',i:'ti-plane',c:'Passport Photos',mm:'51 \xd7 51 mm',inch:'2\u2033 \xd7 2\u2033',dpi:'600 DPI',paper:'Glossy photo paper',a4:'8 per A4 (2\xd74)',lami:'No lamination',dialog:'Print 8-up on A4 at 51\xd751mm. White/off-white background. Eye level 28\u201335mm from bottom.',note:'Strictly 2\xd72 inches. Head 1 to 1\u215e inch. For US, Canada, Australia visas.'},
+  {id:'ph_st',l:'Stamp Size Photo',i:'ti-square-rounded',c:'Passport Photos',mm:'25 \xd7 30 mm',inch:'1\u2033 \xd7 1.18\u2033',dpi:'600 DPI',paper:'Glossy photo paper',a4:'24 per A4 (4\xd76)',lami:'No lamination',dialog:'Print 24-up on A4 at 25\xd730mm. White background.',note:'Smallest common photo size. Print 24-up on A4 for maximum use.'},
+  {id:'4r',l:'4R Photo Print',i:'ti-photo',c:'Photo Prints',mm:'102 \xd7 152 mm',inch:'4\u2033 \xd7 6\u2033',dpi:'300 DPI',paper:'4R glossy photo paper',a4:'2 per A4',lami:'N/A',dialog:'Set paper to "4R" or "4\xd76 inch". Use 4R photo paper.',note:'Most common photo print size.'},
+  {id:'5r',l:'5R Photo Print',i:'ti-photo',c:'Photo Prints',mm:'127 \xd7 178 mm',inch:'5\u2033 \xd7 7\u2033',dpi:'300 DPI',paper:'5R glossy photo paper',a4:'1 per A4 approx',lami:'N/A',dialog:'Set paper to "5\xd77 inch" or "5R".',note:'For studio portraits and display photos.'},
+  {id:'a4p',l:'A4 Document',i:'ti-file',c:'Paper Sizes',mm:'210 \xd7 297 mm',inch:'8.27\u2033 \xd7 11.69\u2033',dpi:'300 DPI',paper:'75\u201380 gsm / 90+ for certs',a4:'1 sheet',lami:'A4 pouch: 216 \xd7 303 mm',dialog:'Standard for all printers. Margins: 25mm top/bottom, 20mm sides.',note:'Default for all govt certs, forms, applications.'},
+  {id:'f4p',l:'F4 / Legal Size',i:'ti-file-text',c:'Paper Sizes',mm:'216 \xd7 330 mm',inch:'8.5\u2033 \xd7 13\u2033',dpi:'300 DPI',paper:'75\u201380 gsm plain',a4:'Separate Legal tray',lami:'Legal pouch: 220 \xd7 340 mm',dialog:'Select "Legal" or "F4" in printer. Must have Legal paper loaded.',note:'For affidavits, power of attorney, court docs in Maharashtra.'},
+  {id:'a5p',l:'A5 Document',i:'ti-file-minus',c:'Paper Sizes',mm:'148 \xd7 210 mm',inch:'5.83\u2033 \xd7 8.27\u2033',dpi:'300 DPI',paper:'80 gsm plain',a4:'Print 2-up on A4',lami:'A5 pouch: 154 \xd7 216 mm',dialog:'Use A5 tray or print 2-up on A4 and cut.',note:'Half of A4. For receipts, small certs, notices.'},
+  {id:'pb',l:'Bank Passbook',i:'ti-notebook',c:'Banking',mm:'185 \xd7 90 mm (approx)',inch:'7.3\u2033 \xd7 3.5\u2033',dpi:'300 DPI',paper:'Passbook ribbon/thermal',a4:'Passbook printer only',lami:'N/A',dialog:'Use dedicated passbook printer. Load in correct orientation.',note:'Cannot use regular inkjet or laser. Needs passbook printer.'},
+];
+
+var PORTALS=[
+  {title:'Identity & IDs',color:'#2563eb',items:[{n:'UIDAI / Aadhaar',u:'https://uidai.gov.in',d:'Aadhaar services'},{n:'NSDL PAN',u:'https://tin.tin.nsdl.com',d:'PAN application'},{n:'UTI PAN',u:'https://www.utiitsl.com',d:'UTI PAN portal'},{n:'DigiLocker',u:'https://digilocker.gov.in',d:'Digital docs wallet'},{n:'Voter Portal',u:'https://voterportal.eci.gov.in',d:'e-EPIC, voter ID'},{n:'Sarathi DL/RC',u:'https://sarathi.parivahan.gov.in',d:'Driving license & slot'},{n:'e-Shram',u:'https://eshram.gov.in',d:'Unorganised worker card'},{n:'Passport India',u:'https://passportindia.gov.in',d:'Passport apply'}]},
+  {title:'Maharashtra \u2014 Aaple Sarkar',color:'#d97706',items:[{n:'Aaple Sarkar',u:'https://aaplesarkar.mahaonline.gov.in',d:'Income, caste, domicile'},{n:'MahaOnline',u:'https://mahaonline.gov.in',d:'450+ MH govt services'},{n:'Bhulekh 7/12',u:'https://bhulekh.mahabhumi.gov.in',d:'Land records'},{n:'iGR Maharashtra',u:'https://igrmaharashtra.gov.in',d:'Registration & e-stamp'},{n:'e-District MH',u:'https://edistrict.mahaonline.gov.in',d:'Certificate applications'},{n:'MSEDCL Bill',u:'https://msedcl.in',d:'Electricity bill MH'},{n:'MSRTC Booking',u:'https://msrtcbus.in',d:'MH bus tickets'}]},
+  {title:'CSC & Central Govt',color:'#16a34a',items:[{n:'CSC DigiSeva',u:'https://digitalseva.csc.gov.in',d:'Main CSC portal'},{n:'UMANG Web',u:'https://web.umang.gov.in',d:'1200+ govt services'},{n:'Income Tax',u:'https://incometax.gov.in',d:'ITR filing'},{n:'GST Portal',u:'https://gst.gov.in',d:'GST reg & returns'},{n:'PM Kisan',u:'https://pmkisan.gov.in',d:'Farmer reg & installment'},{n:'e-Sanjeevani',u:'https://esanjeevaniopd.in',d:'Telemedicine'},{n:'PM Awas Yojana',u:'https://pmaymis.gov.in',d:'Housing scheme'}]},
+  {title:'Insurance & Pension',color:'#7c3aed',items:[{n:'PMJAY Ayushman',u:'https://pmjay.gov.in',d:'Health card'},{n:'NPS / APY',u:'https://enps.nsdl.com',d:'Pension enrollment'},{n:'LIC Online',u:'https://licindia.in',d:'LIC premium'},{n:'PMFBY',u:'https://pmfby.gov.in',d:'Crop insurance'}]},
+  {title:'Travel & Utilities',color:'#0891b2',items:[{n:'IRCTC',u:'https://irctc.co.in',d:'Train ticket booking'},{n:'Railways PNR',u:'https://www.indianrail.gov.in',d:'PNR & train info'},{n:'HP Gas',u:'https://hindustanpetroleum.com',d:'HP LPG booking'},{n:'Bharat Gas',u:'https://ebharatgas.com',d:'Bharat Gas booking'}]},
+  {title:'Education & Exams',color:'#dc2626',items:[{n:'IGNOU',u:'https://ignou.ac.in',d:'Admission & exam forms'},{n:'NIELIT',u:'https://nielit.gov.in',d:'CCC, O-Level form'},{n:'Scholarship',u:'https://scholarships.gov.in',d:'Pre/post-matric'},{n:'MH Results',u:'https://mahresult.nic.in',d:'SSC, HSC results'},{n:'MPSC',u:'https://mpsc.gov.in',d:'MH PSC forms'}]},
+];
+
+var CL=[
+  {id:'aa',n:'Aadhaar Update (Name / Address / DOB)',cat:'Identity',items:['Original Aadhaar card','Address proof \u2014 electricity bill, passbook, or ration card','Identity proof \u2014 PAN, passport, or voter ID','DOB proof if updating \u2014 birth cert or school leaving cert','Mobile registered on Aadhaar for OTP','2 passport photos (35\xd745mm, white bg)','Correction form \u2014 filled and signed']},
+  {id:'pan',n:'PAN Card \u2014 New Application',cat:'Identity',items:['Aadhaar card (mandatory)','DOB proof \u2014 birth cert or Class 10 marksheet','2 passport photos (35\xd745mm)','Form 49A filled','Fee: \u20b9107 physical / \u20b966 e-PAN','Mobile for OTP']},
+  {id:'inc',n:'Income Certificate (\u0909\u0924\u094d\u092a\u0928\u094d\u0928 \u0926\u093e\u0916\u0932\u093e)',cat:'Maharashtra Certs',items:['Aadhaar \u2014 original + photocopy','Ration card \u2014 original + photocopy','Self-declaration of income \u2014 written and signed','2 passport photos','Mobile for OTP','Income proof: salary slip, Form 16, or agri receipt','Aaple Sarkar fee (usually \u20b90\u2013\u20b950)']},
+  {id:'cas',n:'Caste Certificate (\u091c\u093e\u0924 \u092a\u094d\u0930\u092e\u093e\u0923\u092a\u0924\u094d\u0930)',cat:'Maharashtra Certs',items:['Aadhaar \u2014 original + photocopy','Ration card with caste mentioned','School leaving cert with caste','Father\'s/grandfather\'s caste proof','2 passport photos','Affidavit \u20b9100 stamp paper (some talukas)','Self-declaration form']},
+  {id:'dom',n:'Domicile Certificate (\u0905\u0927\u093f\u0935\u093e\u0938 \u0926\u093e\u0916\u0932\u093e)',cat:'Maharashtra Certs',items:['Aadhaar \u2014 original + photocopy','Ration card (MH address)','15-year MH residence proof','School cert showing MH birth/education','2 passport photos']},
+  {id:'sat',n:'7/12 Satbara Extract (\u0938\u093e\u0924\u092c\u093e\u0930\u093e \u0909\u0924\u093e\u0930\u093e)',cat:'Land Records',items:['Survey/Gat number (\u0917\u091f \u0928\u0902\u092c\u0930)','Village name (\u0917\u093e\u0935)','Taluka name (\u0924\u093e\u0932\u0941\u0915\u093e)','District name (\u091c\u093f\u0932\u094d\u0939\u093e)','Owner name or Aadhaar','Website: bhulekh.mahabhumi.gov.in','Fee: \u20b915 per extract']},
+  {id:'pas',n:'Passport \u2014 New Application',cat:'Identity',items:['Aadhaar (mandatory)','PAN card','Voter ID as second ID','Address proof (max 3 months old)','DOB proof \u2014 birth cert or Class 10','2 photos (35\xd745mm, white bg, no specs)','Apply at passportindia.gov.in','Fee paid online before appointment']},
+  {id:'vot',n:'Voter ID \u2014 New Registration',cat:'Identity',items:['Aadhaar card','Age proof \u2014 18+ years','Address proof in constituency','1 passport photo','Fill Form 6 on voterportal.eci.gov.in','Free \u2014 no charge']},
+  {id:'dln',n:'Driving License \u2014 New (LL to DL)',cat:'Identity',items:['Aadhaar as address proof','Age proof \u2014 min 18 for LMV','Medical cert Form 1A from MBBS','2 passport photos','Apply: sarathi.parivahan.gov.in','Fee: \u20b9200\u2013500 by vehicle class']},
+  {id:'esh',n:'e-Shram Card Registration',cat:'Central Schemes',items:['Aadhaar with mobile linked (mandatory)','Bank account + IFSC','Occupation type','Same mobile as Aadhaar number','Free \u2014 no fee','Portal: eshram.gov.in']},
+];
+
+var defaultRates=[
+  {s:'Aadhaar print A4 (B&W)',r:20,c:'Printing'},{s:'Aadhaar card size + lamination',r:50,c:'Printing'},
+  {s:'PAN print + lamination',r:50,c:'Printing'},{s:'Photocopy A4 (B&W)',r:3,c:'Printing'},
+  {s:'Photocopy A4 (colour)',r:15,c:'Printing'},{s:'Print A4 (B&W)',r:5,c:'Printing'},
+  {s:'Print A4 (colour)',r:20,c:'Printing'},{s:'Passport photo \u2014 2 photos',r:50,c:'Photo'},
+  {s:'Passport photo \u2014 4 photos',r:80,c:'Photo'},{s:'4R photo print',r:30,c:'Photo'},
+  {s:'Scanning per page',r:10,c:'Scanning'},{s:'Lamination \u2014 card size',r:20,c:'Lamination'},
+  {s:'Lamination \u2014 A4',r:40,c:'Lamination'},{s:'Lamination \u2014 A3',r:60,c:'Lamination'},
+  {s:'Aadhaar update charge',r:100,c:'ID Services'},{s:'PAN new application charge',r:150,c:'ID Services'},
+  {s:'Income certificate charge',r:100,c:'Certificates'},{s:'Caste certificate charge',r:150,c:'Certificates'},
+  {s:'Domicile certificate charge',r:100,c:'Certificates'},{s:'7/12 Satbara extract',r:50,c:'Certificates'},
+  {s:'IRCTC booking charge',r:50,c:'Travel'},{s:'Mobile recharge charge',r:5,c:'Utility'},
+  {s:'Electricity bill charge',r:20,c:'Utility'},{s:'DTH recharge charge',r:10,c:'Utility'},
+];
+var rates;try{rates=JSON.parse(localStorage.getItem('seva_rates'))||defaultRates;}catch(e){rates=defaultRates;}
+
+var pcat='ID Cards',psel=null,openCL=null,editRates=false;
+
 function rDash(){
   var q=[{i:'ti-printer',l:'Print Helper',s:'print'},{i:'ti-checklist',l:'Checklists',s:'checklists'},{i:'ti-world',l:'Portal Links',s:'portals'},{i:'ti-receipt',l:'Rate Card',s:'rates'}];
-  var dim=[{i:'ti-users',l:'Customer Log'},{i:'ti-coin',l:'Income'},{i:'ti-brand-whatsapp',l:'WA Templates'},{i:'ti-package',l:'Supplies'}];
+  var p2=[{i:'ti-users',l:'Customer Log',s:'customers'},{i:'ti-coin',l:'Income',s:'income'},{i:'ti-brand-whatsapp',l:'WA Templates',s:'wa'}];
   var hot=[{n:'Aaple Sarkar',u:'https://aaplesarkar.mahaonline.gov.in',c:'#92400e',b:'#fef3c7'},{n:'UIDAI Aadhaar',u:'https://uidai.gov.in',c:'#1e40af',b:'#dbeafe'},{n:'NSDL PAN',u:'https://tin.tin.nsdl.com',c:'#166534',b:'#dcfce7'},{n:'CSC DigiSeva',u:'https://digitalseva.csc.gov.in',c:'#581c87',b:'#f3e8ff'},{n:'Bhulekh 7/12',u:'https://bhulekh.mahabhumi.gov.in',c:'#92400e',b:'#fef3c7'},{n:'IRCTC',u:'https://irctc.co.in',c:'#155e75',b:'#cffafe'},{n:'Voter Portal',u:'https://voterportal.eci.gov.in',c:'#991b1b',b:'#fee2e2'},{n:'Parivahan DL',u:'https://sarathi.parivahan.gov.in',c:'#374151',b:'#f3f4f6'}];
-  return '<div style="margin-bottom:1.25rem"><div style="font-size:20px;font-weight:600;color:#111827;margin-bottom:4px">Namaskar</div><div style="font-size:13px;color:#9ca3af">Sai Tilak Enterprises · Ambernath, Thane · Phase 1 live</div></div>'
+  var td=todayStr(),customers=getCustomers().filter(function(c){return c.date===td;});
+  var todayTotal=customers.reduce(function(s,c){return s+c.amount;},0);
+  return '<div style="margin-bottom:1.25rem"><div style="font-size:20px;font-weight:600;color:#111827;margin-bottom:4px">Namaskar</div><div style="font-size:13px;color:#9ca3af">Sai Tilak Enterprises \xb7 Ambernath, Thane</div></div>'
+    +(todayTotal>0?'<div class="day-bar" style="margin-bottom:1rem;cursor:pointer" onclick="nav(\'income\')"><div><div class="day-total">'+fmtAmt(todayTotal)+'</div><div class="day-meta">Today\'s income \xb7 '+customers.length+' customer'+(customers.length!==1?'s':'')+'</div></div><i class="ti ti-arrow-right" style="color:#16a34a;font-size:18px"></i></div>':'')
     +'<div class="card"><div class="ch">Quick access</div><div class="dqgrid">'
-    +q.map(function(x){return '<div class="dq" onclick="nav(\''+x.s+'\')"><i class="ti '+x.i+'" aria-hidden="true"></i><div class="dq-lbl">'+x.l+'</div></div>';}).join('')
-    +dim.map(function(x){return '<div class="dq dim"><i class="ti '+x.i+'" aria-hidden="true"></i><div class="dq-lbl">'+x.l+'</div><div class="p2b">Phase 2</div></div>';}).join('')
+    +q.map(function(x){return '<div class="dq" onclick="nav(\''+x.s+'\')"><i class="ti '+x.i+'"></i><div class="dq-lbl">'+x.l+'</div></div>';}).join('')
+    +p2.map(function(x){return '<div class="dq" onclick="nav(\''+x.s+'\')"><i class="ti '+x.i+'"></i><div class="dq-lbl">'+x.l+'</div><div class="p2b">Live \u2713</div></div>';}).join('')
     +'</div></div>'
-    +'<div class="card"><div class="ch">Hot portals — one tap</div><div class="hpgrid">'
+    +'<div class="card"><div class="ch">Hot portals</div><div class="hpgrid">'
     +hot.map(function(h){return '<a class="hp" href="'+h.u+'" target="_blank" style="background:'+h.b+';color:'+h.c+';border-color:'+h.c+'44">'+h.n+'</a>';}).join('')
     +'</div></div>';
 }
 
-// ---- PRINT ----
 function rPrint(){
   var cats=[];PI.forEach(function(p){if(cats.indexOf(p.c)<0)cats.push(p.c);});
-  var items=PI.filter(function(p){return p.c===pcat;});
-  var item=PI.filter(function(p){return p.id===psel;})[0];
+  var items=PI.filter(function(p){return p.c===pcat;}),item=PI.filter(function(p){return p.id===psel;})[0];
   var h='<div class="card"><div class="cat-tabs">'+cats.map(function(c){return '<button class="ct'+(pcat===c?' on':'')+'" onclick="setPCat(\''+c+'\')">'+c+'</button>';}).join('')+'</div>'
-    +'<div class="pbgrid">'+items.map(function(p){return '<div class="pb'+(psel===p.id?' on':'')+'" onclick="setPItem(\''+p.id+'\')"><i class="ti '+p.i+'" aria-hidden="true"></i><div class="pb-lbl">'+p.l+'</div></div>';}).join('')+'</div></div>';
-  if(item){
-    h+='<div class="result"><div class="res-name">'+item.l+'</div><div class="specs">'
-      +'<div><div class="sl">Size (mm)</div><div class="sv">'+item.mm+'</div></div>'
-      +'<div><div class="sl">Size (inches)</div><div class="sv">'+item.inch+'</div></div>'
-      +'<div><div class="sl">Resolution</div><div class="sv">'+item.dpi+'</div></div>'
-      +'<div><div class="sl">Paper type</div><div class="sv plain">'+item.paper+'</div></div>'
-      +'<div><div class="sl">Per A4 sheet</div><div class="sv plain">'+item.a4+'</div></div>'
-      +'<div><div class="sl">Lamination size</div><div class="sv plain">'+item.lami+'</div></div>'
-      +'</div><div class="dbox"><div class="dlbl">Printer dialog setting</div><div class="dval">'+item.dialog+'</div></div>'
-      +'<div class="rnote">'+item.note+'</div></div>';
-  } else {
-    h+='<div class="empty"><i class="ti ti-hand-click" aria-hidden="true"></i>Tap any document above to see exact print settings</div>';
-  }
+    +'<div class="pbgrid">'+items.map(function(p){return '<div class="pb'+(psel===p.id?' on':'')+'" onclick="setPItem(\''+p.id+'\')"><i class="ti '+p.i+'"></i><div class="pb-lbl">'+p.l+'</div></div>';}).join('')+'</div></div>';
+  if(item){h+='<div class="result"><div class="res-name">'+item.l+'</div><div class="specs"><div><div class="sl">Size (mm)</div><div class="sv">'+item.mm+'</div></div><div><div class="sl">Size (inches)</div><div class="sv">'+item.inch+'</div></div><div><div class="sl">Resolution</div><div class="sv">'+item.dpi+'</div></div><div><div class="sl">Paper type</div><div class="sv plain">'+item.paper+'</div></div><div><div class="sl">Per A4 sheet</div><div class="sv plain">'+item.a4+'</div></div><div><div class="sl">Lamination size</div><div class="sv plain">'+item.lami+'</div></div></div><div class="dbox"><div class="dlbl">Printer dialog setting</div><div class="dval">'+item.dialog+'</div></div><div class="rnote">'+item.note+'</div></div>';}
+  else{h+='<div class="empty"><i class="ti ti-hand-click"></i>Tap any document above to see exact print settings</div>';}
   return h;
 }
-function setPCat(c){pcat=c;psel=null;document.getElementById('content').innerHTML=rPrint();document.getElementById('content').scrollTop=0;}
+function setPCat(c){pcat=c;psel=null;document.getElementById('content').innerHTML=rPrint();}
 function setPItem(id){psel=(psel===id)?null:id;document.getElementById('content').innerHTML=rPrint();}
 
-// ---- PORTALS ----
-function rPortals(){
-  return PORTALS.map(function(g){
-    return '<div class="card"><div class="ch" style="color:'+g.color+'">'+g.title+'</div><div class="pgrid">'
-      +g.items.map(function(p){return '<a class="plink" href="'+p.u+'" target="_blank" rel="noopener"><div class="pl-name">'+p.n+'</div><div class="pl-url">'+p.u.replace('https://','')+' </div><div class="pl-desc">'+p.d+'</div></a>';}).join('')
-      +'</div></div>';
-  }).join('');
-}
+function rPortals(){return PORTALS.map(function(g){return '<div class="card"><div class="ch" style="color:'+g.color+'">'+g.title+'</div><div class="pgrid">'+g.items.map(function(p){return '<a class="plink" href="'+p.u+'" target="_blank" rel="noopener"><div class="pl-name">'+p.n+'</div><div class="pl-url">'+p.u.replace('https://','')+' </div><div class="pl-desc">'+p.d+'</div></a>';}).join('')+'</div></div>';}).join('');}
 
-// ---- CHECKLISTS ----
 function rCL(){
   return CL.map(function(cl){
-    var done=cl.items.filter(function(_,i){return !!ticked[cl.id+'-'+i];}).length;
-    var isOpen=openCL===cl.id;
-    var h='<div class="clf"><div class="clf-h" onclick="togCL(\''+cl.id+'\')">'
-      +'<div style="flex:1"><div class="clf-title">'+cl.n+'</div><div class="clf-meta">'+cl.cat+' · '+cl.items.length+' documents</div></div>'
-      +(done>0?'<span class="prog">'+done+'/'+cl.items.length+'</span>':'')
-      +'<i class="ti '+(isOpen?'ti-chevron-up':'ti-chevron-down')+'" style="color:#9ca3af;font-size:14px;margin-left:8px" aria-hidden="true"></i></div>';
-    if(isOpen){
-      h+='<div class="cl-items">';
-      cl.items.forEach(function(item,i){
-        var ck=!!ticked[cl.id+'-'+i];
-        h+='<div class="ci'+(ck?' ck':'')+'" onclick="tickI(\''+cl.id+'\','+i+')">'
-          +'<div class="cbox'+(ck?' ck':'')+'">'+( ck?'<i class="ti ti-check" style="font-size:10px;color:#fff" aria-hidden="true"></i>':'')+'</div>'
-          +'<div class="cl-text">'+item+'</div></div>';
-      });
-      if(done>0)h+='<button class="rbtn" onclick="event.stopPropagation();resetCL(\''+cl.id+'\')">Reset checklist</button>';
-      h+='</div>';
-    }
+    var done=cl.items.filter(function(_,i){return !!ticked[cl.id+'-'+i];}).length,isOpen=openCL===cl.id;
+    var h='<div class="clf"><div class="clf-h" onclick="togCL(\''+cl.id+'\')">'+'<div style="flex:1"><div class="clf-title">'+cl.n+'</div><div class="clf-meta">'+cl.cat+' \xb7 '+cl.items.length+' documents</div></div>'+(done>0?'<span class="prog">'+done+'/'+cl.items.length+'</span>':'')+'<i class="ti '+(isOpen?'ti-chevron-up':'ti-chevron-down')+'" style="color:#9ca3af;font-size:14px;margin-left:8px"></i></div>';
+    if(isOpen){h+='<div class="cl-items">';cl.items.forEach(function(item,i){var ck=!!ticked[cl.id+'-'+i];h+='<div class="ci'+(ck?' ck':'')+'" onclick="tickI(\''+cl.id+'\','+i+')">'+'<div class="cbox'+(ck?' ck':'')+'">'+( ck?'<i class="ti ti-check" style="font-size:10px;color:#fff"></i>':'')+'</div>'+'<div class="cl-text">'+item+'</div></div>';});if(done>0)h+='<button class="rbtn" onclick="event.stopPropagation();resetCL(\''+cl.id+'\')">Reset</button>';h+='</div>';}
     return h+'</div>';
   }).join('');
 }
 function togCL(id){openCL=(openCL===id)?null:id;document.getElementById('content').innerHTML=rCL();}
 function tickI(lid,i){ticked[lid+'-'+i]=!ticked[lid+'-'+i];document.getElementById('content').innerHTML=rCL();}
 function resetCL(lid){CL.filter(function(c){return c.id===lid;})[0].items.forEach(function(_,i){delete ticked[lid+'-'+i];});document.getElementById('content').innerHTML=rCL();}
+var ticked={};
 
-// ---- RATE CARD ----
 function rRates(){
   var cats=[];rates.forEach(function(r){if(cats.indexOf(r.c)<0)cats.push(r.c);});
-  var h='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">'
-    +'<div style="font-size:12px;color:#9ca3af">Tap any amount to edit. Auto-saved to this device.</div>'
-    +'<button class="gbtn'+(editRates?' on':'')+'" onclick="togEdit()">'+(editRates?'Done editing':'Edit my rates')+'</button></div>';
-  cats.forEach(function(cat){
-    h+='<div class="card"><div class="ch">'+cat+'</div><table class="rt"><thead><tr><th>Service</th><th style="text-align:right">Your rate (₹)</th></tr></thead><tbody>';
-    rates.forEach(function(r,i){
-      if(r.c===cat){
-        h+='<tr><td>'+r.s+'</td><td style="text-align:right">'
-          +(editRates?'<input class="ri" type="number" value="'+r.r+'" onchange="updRate('+i+',this.value)">'
-            :'<span style="font-family:\'IBM Plex Mono\',monospace;font-weight:500">₹'+r.r+'</span>')
-          +'</td></tr>';
-      }
-    });
-    h+='</tbody></table></div>';
-  });
+  var h='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem"><div style="font-size:12px;color:#9ca3af">Tap any amount to edit. Auto-saved.</div><button class="gbtn'+(editRates?' on':'')+'" onclick="togEdit()">'+(editRates?'Done editing':'Edit my rates')+'</button></div>';
+  cats.forEach(function(cat){h+='<div class="card"><div class="ch">'+cat+'</div><table class="rt"><thead><tr><th>Service</th><th style="text-align:right">Your rate</th></tr></thead><tbody>';rates.forEach(function(r,i){if(r.c===cat)h+='<tr><td>'+r.s+'</td><td style="text-align:right">'+(editRates?'<input class="ri" type="number" value="'+r.r+'" onchange="updRate('+i+',this.value)">':'<span style="font-family:\'IBM Plex Mono\',monospace;font-weight:500">\u20b9'+r.r+'</span>')+'</td></tr>';});h+='</tbody></table></div>';});
   return h;
 }
 function togEdit(){editRates=!editRates;document.getElementById('content').innerHTML=rRates();}
 function updRate(i,v){rates[i]={s:rates[i].s,r:Number(v),c:rates[i].c};try{localStorage.setItem('seva_rates',JSON.stringify(rates));}catch(e){}}
 
-// ---- COMING SOON ----
-function rSoon(t){
-  return '<div class="soon"><i class="ti ti-clock" aria-hidden="true"></i><div class="soon-title">'+t+' — coming in Phase 2</div><div class="soon-sub">Customer Log, Income Tracker, Receipt Generator, BC Commission Log, and WhatsApp Templates are next.</div></div>';
+var viewDate=todayStr();
+function getCustomers(){try{return JSON.parse(localStorage.getItem('seva_customers'))||[];}catch(e){return [];}}
+function saveCustomers(a){try{localStorage.setItem('seva_customers',JSON.stringify(a));}catch(e){}}
+
+function addCustomer(){
+  var name=document.getElementById('c-name').value.trim();
+  var service=document.getElementById('c-service').value.trim();
+  var amount=parseFloat(document.getElementById('c-amount').value)||0;
+  var notes=document.getElementById('c-notes').value.trim();
+  if(!name||!service||!amount){alert('Please fill Name, Service, and Amount.');return;}
+  var customers=getCustomers(),now=new Date();
+  customers.unshift({id:Date.now(),name:name,service:service,amount:amount,notes:notes,date:now.toISOString().slice(0,10),time:now.toTimeString().slice(0,5)});
+  saveCustomers(customers);
+  document.getElementById('c-name').value='';document.getElementById('c-service').value='';document.getElementById('c-amount').value='';document.getElementById('c-notes').value='';
+  document.getElementById('content').innerHTML=rCustomers();
 }
 
-// ---- INIT ----
-document.querySelectorAll('.ni').forEach(function(n){n.addEventListener('click',function(){nav(n.dataset.s);});});
-setDate();
-nav('dash');
+function delCustomer(id){if(!confirm('Delete this entry?'))return;saveCustomers(getCustomers().filter(function(c){return c.id!==id;}));document.getElementById('content').innerHTML=rCustomers();}
+function prevDay(){var d=new Date(viewDate);d.setDate(d.getDate()-1);viewDate=d.toISOString().slice(0,10);document.getElementById('content').innerHTML=rCustomers();}
+function nextDay(){var d=new Date(viewDate);d.setDate(d.getDate()+1);if(viewDate<todayStr()){viewDate=d.toISOString().slice(0,10);document.getElementById('content').innerHTML=rCustomers();}}
+function goToday(){viewDate=todayStr();document.getElementById('content').innerHTML=rCustomers();}
 
-// ---- SERVICE WORKER (PWA offline) ----
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').catch(function(){});
+var svcList=['Aadhaar Print (A4)','Aadhaar + Lamination','PAN Print + Lamination','Passport Photo (2)','Passport Photo (4)','Photocopy A4 (B&W)','Photocopy A4 (Colour)','Print A4 (B&W)','Print A4 (Colour)','Scanning','Lamination Card','Lamination A4','Aadhaar Update','PAN New Application','Income Certificate','Caste Certificate','Domicile Certificate','7/12 Satbara Extract','Voter ID Registration','Passport Application','Driving License','e-Shram Card','IRCTC Ticket','Electricity Bill','Mobile Recharge','DTH Recharge','AEPS Withdrawal','AEPS Balance Check','Other'];
+
+function rCustomers(){
+  viewDate=viewDate||todayStr();
+  var all=getCustomers(),day=all.filter(function(c){return c.date===viewDate;});
+  var dayTotal=day.reduce(function(s,c){return s+c.amount;},0);
+  var isToday=viewDate===todayStr();
+  var h='<div class="card"><div class="ch">Add walk-in customer</div>'
+    +'<div class="add-form">'
+    +'<div class="fl"><label>Name</label><input id="c-name" placeholder="e.g. Ramesh Patil" autocomplete="off"></div>'
+    +'<div class="fl"><label>Service</label><input id="c-service" list="svc-list" placeholder="Select or type" autocomplete="off"><datalist id="svc-list">'+svcList.map(function(s){return '<option value="'+s+'">';}).join('')+'</datalist></div>'
+    +'<div class="fl"><label>Amount \u20b9</label><input id="c-amount" type="number" placeholder="0" min="0"></div>'
+    +'<div class="fl"><label>Notes</label><input id="c-notes" placeholder="Optional..."></div>'
+    +'<button class="add-btn" onclick="addCustomer()" title="Add"><i class="ti ti-plus"></i></button>'
+    +'</div></div>'
+    +'<div class="date-nav">'
+    +'<button onclick="prevDay()"><i class="ti ti-chevron-left"></i></button>'
+    +'<span>'+fmtDate(viewDate)+(isToday?' (Today)':'')+'</span>'
+    +'<button onclick="nextDay()" '+(isToday?'disabled style="opacity:.4"':'')+'><i class="ti ti-chevron-right"></i></button>'
+    +(isToday?'':'<button onclick="goToday()" style="font-size:12px">Today</button>')
+    +'</div>';
+  if(day.length>0){
+    h+='<div class="day-bar"><div><div class="day-total">'+fmtAmt(dayTotal)+'</div><div class="day-meta">'+day.length+' customer'+(day.length!==1?'s':'')+'</div></div></div>';
+    h+='<div class="card" style="padding:0;overflow:hidden"><table class="dtable"><thead><tr><th>Time</th><th>Name</th><th>Service</th><th>Amount</th><th>Notes</th><th></th></tr></thead><tbody>';
+    day.forEach(function(c){h+='<tr><td style="color:#9ca3af;font-family:\'IBM Plex Mono\',monospace;font-size:11px">'+c.time+'</td><td style="font-weight:500">'+c.name+'</td><td><span class="svc-pill">'+c.service+'</span></td><td class="amt">'+fmtAmt(c.amount)+'</td><td style="color:#9ca3af;font-size:12px">'+(c.notes||'\u2014')+'</td><td style="white-space:nowrap"><button class="ico-btn" onclick="openReceipt('+c.id+')" title="Receipt"><i class="ti ti-printer"></i></button><button class="ico-btn del" onclick="delCustomer('+c.id+')" title="Delete"><i class="ti ti-trash"></i></button></td></tr>';});
+    h+='</tbody></table></div>';
+  }else{
+    h+='<div class="empty"><i class="ti ti-user-plus"></i>No customers for '+fmtDate(viewDate)+'.</div>';
+  }
+  return h;
 }
+
+function openReceipt(id){
+  var c=getCustomers().filter(function(x){return x.id===id;})[0];if(!c)return;
+  var h='<div class="rcpt-overlay" id="rcpt-overlay"><div class="rcpt-box">'
+    +'<div class="rcpt-head"><div class="rcpt-biz">Sai Tilak Enterprises</div><div class="rcpt-addr">Ambernath, Thane, Maharashtra</div></div>'
+    +'<div class="rcpt-row"><span style="color:#9ca3af">Date</span><span>'+fmtDate(c.date)+'</span></div>'
+    +'<div class="rcpt-row"><span style="color:#9ca3af">Time</span><span>'+c.time+'</span></div>'
+    +'<div class="rcpt-row"><span style="color:#9ca3af">Customer</span><span style="font-weight:500">'+c.name+'</span></div>'
+    +'<div class="rcpt-row"><span style="color:#9ca3af">Service</span><span>'+c.service+'</span></div>'
+    +(c.notes?'<div class="rcpt-row"><span style="color:#9ca3af">Notes</span><span style="font-size:12px">'+c.notes+'</span></div>':'')
+    +'<div class="rcpt-row tot"><span>Total</span><span>'+fmtAmt(c.amount)+'</span></div>'
+    +'<div class="rcpt-thanks">Thank you for visiting STE!</div>'
+    +'<div class="rcpt-btns"><button class="r-print" onclick="doPrint('+c.id+')"><i class="ti ti-printer" style="margin-right:5px"></i>Print</button><button class="r-close" onclick="closeReceipt()">Close</button></div>'
+    +'</div></div>';
+  document.getElementById('content').insertAdjacentHTML('beforeend',h);
+}
+
+function closeReceipt(){var o=document.getElementById('rcpt-overlay');if(o)o.remove();}
+
+function doPrint(id){
+  var c=getCustomers().filter(function(x){return x.id===id;})[0];if(!c)return;
+  var pt=document.getElementById('print-target');pt.style.display='block';
+  pt.innerHTML='<div style="font-family:sans-serif;max-width:280px;margin:0 auto"><div style="text-align:center;border-bottom:1px dashed #ccc;padding-bottom:12px;margin-bottom:12px"><div style="font-size:16px;font-weight:700">Sai Tilak Enterprises</div><div style="font-size:11px;color:#666;margin-top:3px">Ambernath, Thane, Maharashtra</div></div><table style="width:100%;font-size:13px;border-collapse:collapse"><tr><td style="color:#666;padding:3px 0">Date</td><td style="text-align:right">'+fmtDate(c.date)+'</td></tr><tr><td style="color:#666;padding:3px 0">Time</td><td style="text-align:right">'+c.time+'</td></tr><tr><td style="color:#666;padding:3px 0">Customer</td><td style="text-align:right;font-weight:600">'+c.name+'</td></tr><tr><td style="color:#666;padding:3px 0">Service</td><td style="text-align:right">'+c.service+'</td></tr>'+(c.notes?'<tr><td style="color:#666;padding:3px 0">Notes</td><td style="text-align:right">'+c.notes+'</td></tr>':'')+'<tr style="border-top:1px solid #ccc"><td style="font-weight:700;padding-top:8px;font-size:15px">Total</td><td style="text-align:right;font-weight:700;font-size:15px;padding-top:8px">'+fmtAmt(c.amount)+'</td></tr></table><div style="text-align:center;font-size:11px;color:#999;margin-top:14px;border-top:1px dashed #ccc;padding-top:10px">Thank you for visiting STE!</div></div>';
+  window.print();
+  setTimeout(function(){pt.style.display='none';pt.innerHTML='';},500);
+}
+
+function getExpenses(){try{return JSON.parse(localStorage.getItem('seva_expenses'))||[];}catch(e){return [];}}
+function saveExpenses(a){try{localStorage.setItem('seva_expenses',JSON.stringify(a));}catch(e){}}
+
+function addExpense(){
+  var item=document.getElementById('exp-item').value.trim(),amount=parseFloat(document.getElementById('exp-amount').value)||0;
+  if(!item||!amount){alert('Enter item and amount.');return;}
+  var exps=getExpenses(),now=new Date();
+  exps.unshift({id:Date.now(),item:item,amount:amount,date:now.toISOString().slice(0,10)});
+  saveExpenses(exps);document.getElementById('exp-item').value='';document.getElementById('exp-amount').value='';
+  document.getElementById('content').innerHTML=rIncome();
+}
+function delExpense(id){if(!confirm('Delete?'))return;saveExpenses(getExpenses().filter(function(e){return e.id!==id;}));document.getElementById('content').innerHTML=rIncome();}
+
+function sumI(s,e){return getCustomers().filter(function(c){return c.date>=s&&c.date<=e;}).reduce(function(t,c){return t+c.amount;},0);}
+function sumE(s,e){return getExpenses().filter(function(x){return x.date>=s&&x.date<=e;}).reduce(function(t,x){return t+x.amount;},0);}
+function wkStart(){var d=new Date();d.setDate(d.getDate()-d.getDay());return d.toISOString().slice(0,10);}
+function moStart(){return todayStr().slice(0,7)+'-01';}
+
+function rIncome(){
+  var td=todayStr(),ws=wkStart(),ms=moStart();
+  var tI=sumI(td,td),wI=sumI(ws,td),mI=sumI(ms,td),tE=sumE(td,td),mE=sumE(ms,td),tN=tI-tE;
+  var mc=getCustomers().filter(function(c){return c.date>=ms&&c.date<=td;});
+  var sm={};mc.forEach(function(c){if(!sm[c.service])sm[c.service]={n:0,t:0};sm[c.service].n++;sm[c.service].t+=c.amount;});
+  var sa=Object.keys(sm).map(function(k){return {s:k,n:sm[k].n,t:sm[k].t};}).sort(function(a,b){return b.t-a.t;});
+  var h='<div class="inc-grid">'
+    +'<div class="inc-card hi"><div class="inc-val">'+fmtAmt(tI)+'</div><div class="inc-lbl">Today\'s income</div></div>'
+    +'<div class="inc-card"><div class="inc-val">'+fmtAmt(wI)+'</div><div class="inc-lbl">This week</div></div>'
+    +'<div class="inc-card"><div class="inc-val">'+fmtAmt(mI)+'</div><div class="inc-lbl">This month</div></div>'
+    +'<div class="inc-card '+(tN>=0?'hi':'am')+'"><div class="inc-val">'+fmtAmt(tN)+'</div><div class="inc-lbl">Net profit today</div></div>'
+    +'<div class="inc-card am"><div class="inc-val">'+fmtAmt(mE)+'</div><div class="inc-lbl">Expenses this month</div></div>'
+    +'</div>';
+  if(sa.length>0){
+    h+='<div class="card"><div class="ch">Service breakdown \u2014 this month</div><table class="dtable"><thead><tr><th>Service</th><th>Count</th><th>Total</th></tr></thead><tbody>';
+    sa.forEach(function(x){h+='<tr><td><span class="svc-pill">'+x.s+'</span></td><td style="color:#9ca3af">'+x.n+'\xd7</td><td class="amt">'+fmtAmt(x.t)+'</td></tr>';});
+    h+='</tbody></table></div>';
+  }
+  var tc=getCustomers().filter(function(c){return c.date===td;});
+  if(tc.length>0){
+    h+='<div class="card"><div class="ch">Today\'s customers</div><table class="dtable"><thead><tr><th>Time</th><th>Name</th><th>Service</th><th>Amount</th></tr></thead><tbody>';
+    tc.forEach(function(c){h+='<tr><td style="color:#9ca3af;font-family:\'IBM Plex Mono\',monospace;font-size:11px">'+c.time+'</td><td style="font-weight:500">'+c.name+'</td><td><span class="svc-pill">'+c.service+'</span></td><td class="amt">'+fmtAmt(c.amount)+'</td></tr>';});
+    h+='</tbody></table></div>';
+  }
+  h+='<div class="card"><div class="ch">Add expense</div><div class="add-form" style="grid-template-columns:1fr 100px 36px"><div class="fl"><label>Item</label><input id="exp-item" placeholder="e.g. A4 paper 1 ream"></div><div class="fl"><label>Amount \u20b9</label><input id="exp-amount" type="number" placeholder="0"></div><button class="add-btn" onclick="addExpense()"><i class="ti ti-plus"></i></button></div></div>';
+  var exps=getExpenses().slice(0,20);
+  if(exps.length>0){
+    h+='<div class="card"><div class="ch">Recent expenses</div><table class="dtable"><thead><tr><th>Date</th><th>Item</th><th>Amount</th><th></th></tr></thead><tbody>';
+    exps.forEach(function(e){h+='<tr><td style="color:#9ca3af;font-size:11px;font-family:\'IBM Plex Mono\',monospace">'+fmtDate(e.date)+'</td><td>'+e.item+'</td><td class="amt" style="color:#dc2626">'+fmtAmt(e.amount)+'</td><td><button class="ico-btn del" onclick="delExpense('+e.id+')"><i class="ti ti-trash"></i></button></td></tr>';});
+    h+='</tbody></table></div>';
+  }
+  return h;
+}
+
+var WA=[
+  {label:'Document ready \u2014 collect',msg:'Namaskar! Your {service} is ready. Please collect from Sai Tilak Enterprises, Ambernath. Timing: 10 AM \u2013 7 PM. Queries: +91 92724 03788. Thank you!'},
+  {label:'Application submitted',msg:'Namaskar! Your application for {service} has been submitted. Token/tracking number: {token}. Updates will come on your registered mobile. Queries: +91 92724 03788.'},
+  {label:'Come with documents',msg:'Namaskar! For your {service}, please bring: Aadhaar (original + copy), Ration card, 2 passport photos, and any relevant certificates. Visit STE, Ambernath between 10 AM \u2013 7 PM.'},
+  {label:'Appointment reminder',msg:'Reminder: Your appointment at STE tomorrow is for {service}. Please bring all required documents. Time: {time}. Address: Ambernath. Queries: +91 92724 03788.'},
+  {label:'Payment confirmation',msg:'Dear {name}, we received your payment of \u20b9{amount} for {service} on {date}. Thank you for choosing STE, Ambernath! Queries: +91 92724 03788.'},
+  {label:'Application rejected \u2014 reapply',msg:'Namaskar! Your {service} application was returned due to: {reason}. Please visit again with correct documents to resubmit. Apologies for the inconvenience. STE, Ambernath: +91 92724 03788.'},
+  {label:'Aadhaar update submitted',msg:'Namaskar! Your Aadhaar update has been submitted. URN: {urn}. Check status on uidai.gov.in or call 1947. Takes 5\u20137 working days. STE, Ambernath: +91 92724 03788.'},
+  {label:'PAN card dispatched',msg:'Namaskar! Your PAN card has been dispatched. Track using your application number on the NSDL/UTI portal. Expected in 7\u201315 working days. STE, Ambernath: +91 92724 03788.'},
+  {label:'Certificate approved',msg:'Great news! Your {service} has been approved. Download from Aaple Sarkar portal or collect the print from STE, Ambernath. Queries: +91 92724 03788.'},
+  {label:'IRCTC ticket booked',msg:'Namaskar! Train ticket booked. PNR: {pnr}. Train: {train}. Date: {date}. Seat: {seat}. Keep this PNR for reference. STE, Ambernath: +91 92724 03788.'},
+];
+
+function rWA(){
+  return '<div style="margin-bottom:.75rem;font-size:12px;color:#9ca3af">Tap Copy on any template. Replace words in {curly brackets} with actual details before sending.</div>'
+    +WA.map(function(w,i){return '<div class="wa-card"><div class="wa-msg"><div class="wa-label">'+w.label+'</div>'+w.msg+'</div><button class="copy-btn" id="wb'+i+'" onclick="copyWA('+i+')"><i class="ti ti-copy"></i> Copy</button></div>';}).join('');
+}
+
+function copyWA(i){
+  navigator.clipboard.writeText(WA[i].msg).then(function(){var b=document.getElementById('wb'+i);b.textContent='\u2713 Copied';b.classList.add('copied');setTimeout(function(){b.innerHTML='<i class="ti ti-copy"></i> Copy';b.classList.remove('copied');},2000);}).catch(function(){alert('Copy manually:\n\n'+WA[i].msg);});
+}
+
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}
 </script>
 </body>
 </html>
