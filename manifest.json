@@ -2,7 +2,7 @@
   "name": "SevaDesk — STE CSC Operations",
   "short_name": "SevaDesk",
   "description": "Personal CSC operations dashboard for Sai Tilak Enterprises, Ambernath.",
-  "start_url": "/sevadesk/",
+  "start_url": "https://fromtilak.github.io/sevadesk/",
   "scope": "/sevadesk/",
   "display": "standalone",
   "orientation": "any",
