@@ -1,9 +1,8 @@
-const CACHE = 'sevadesk-v1';
+const CACHE = 'sevadesk-v2';
 const ASSETS = [
   './',
   './index.html',
   'https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css',
-  'https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/fonts/tabler-icons.woff2',
 ];
 
 self.addEventListener('install', function(e) {
@@ -24,10 +23,16 @@ self.addEventListener('activate', function(e) {
   self.clients.claim();
 });
 
+// Network-first: always try to fetch the latest version.
+// Only fall back to cache if the network request fails (offline).
 self.addEventListener('fetch', function(e) {
   e.respondWith(
-    caches.match(e.request).then(function(cached) {
-      return cached || fetch(e.request).catch(function(){return cached;});
+    fetch(e.request).then(function(response) {
+      var copy = response.clone();
+      caches.open(CACHE).then(function(c) { c.put(e.request, copy); });
+      return response;
+    }).catch(function() {
+      return caches.match(e.request);
     })
   );
 });
